@@ -1,0 +1,7 @@
+resilience4j:
+  ratelimiter:
+    instances:
+      onboardingApi:
+        limit-for-period: 10
+        limit-refresh-period: 1m
+        timeout-duration: 0
