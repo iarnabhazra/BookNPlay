@@ -10,6 +10,7 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import java.security.Key;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -22,6 +23,9 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Value("${jwt.secret:change-me-please-very-long-secret-key}")
     private String secret;
+
+    @Autowired
+    private MeterRegistry meterRegistry;
 
     private Key key() { return Keys.hmacShaKeyFor(Decoders.BASE64.decode(java.util.Base64.getEncoder().encodeToString(secret.getBytes()))); }
     @Override
@@ -39,7 +43,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(new ChannelInterceptor() {
             private final io.micrometer.core.instrument.Counter authFailures = io.micrometer.core.instrument.Counter
-                    .builder("ws.auth.failures").description("Failed websocket auth attempts").register(meterRegistry());
+                    .builder("ws.auth.failures").description("Failed websocket auth attempts").register(meterRegistry);
 
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -53,9 +57,5 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         });
     }
 
-    // Lazy holder to avoid early initialization issues
-    private MeterRegistry meterRegistry() {
-        return org.springframework.web.context.ContextLoader.getCurrentWebApplicationContext()
-                .getBean(MeterRegistry.class);
-    }
+    // Removed: private MeterRegistry meterRegistry() method - now using @Autowired injection
 }

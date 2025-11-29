@@ -1,5 +1,7 @@
 server:
   port: 8086
+  servlet:
+    context-path: /reporting-service
 spring:
   application:
     name: reporting-service
@@ -7,6 +9,9 @@ spring:
     url: jdbc:postgresql://localhost:5432/booknplay_reporting
     username: postgres
     password: postgres
+  jpa:
+    properties:
+      "[hibernate.dialect]": org.hibernate.dialect.PostgreSQLDialect
   batch:
     jdbc:
       initialize-schema: always

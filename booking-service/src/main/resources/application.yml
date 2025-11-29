@@ -1,5 +1,7 @@
 server:
   port: 8083
+  servlet:
+    context-path: /booking-service
 spring:
   application:
     name: booking-service
@@ -8,12 +10,14 @@ spring:
   main:
     allow-bean-definition-overriding: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/booknplay_booking
+    url: jdbc:postgresql://localhost:5433/booknplay_booking
     username: postgres
     password: postgres
   jpa:
     hibernate:
       ddl-auto: update
+    properties:
+      "[hibernate.dialect]": org.hibernate.dialect.PostgreSQLDialect
   kafka:
     bootstrap-servers: localhost:9092
 management:

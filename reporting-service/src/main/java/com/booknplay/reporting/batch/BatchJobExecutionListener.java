@@ -12,8 +12,6 @@ import org.springframework.stereotype.Component;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -45,12 +43,10 @@ public class BatchJobExecutionListener implements JobExecutionListener {
     @Override
     public void afterJob(JobExecution jobExecution) {
         String jobName = jobExecution.getJobInstance().getJobName();
-        LocalDateTime startTime = LocalDateTime.ofInstant(
-                jobExecution.getStartTime().toInstant(), ZoneId.systemDefault());
-        LocalDateTime endTime = LocalDateTime.ofInstant(
-                jobExecution.getEndTime().toInstant(), ZoneId.systemDefault());
+        LocalDateTime startTime = jobExecution.getStartTime();
+        LocalDateTime endTime = jobExecution.getEndTime();
         
-        long duration = jobExecution.getEndTime().getTime() - jobExecution.getStartTime().getTime();
+        long duration = java.time.temporal.ChronoUnit.MILLIS.between(startTime, endTime);
         
         log.info("Batch job completed: {} with status: {} in {} ms", 
                 jobName, jobExecution.getStatus(), duration);

@@ -1,17 +1,24 @@
 server:
   port: 8081
+  servlet:
+    context-path: /auth-service
 spring:
   application:
     name: auth-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/booknplay_auth
+    url: jdbc:postgresql://localhost:5432/booknplay_auth?options=-c%20session_replication_role%3Dreplica
     username: postgres
     password: postgres
+    hikari:
+      connection-timeout: 30000
+      maximum-pool-size: 5
+      data-source-properties:
+        ApplicationName: auth-service
   jpa:
     hibernate:
       ddl-auto: update
     properties:
-      hibernate.jdbc.time_zone: UTC
+      "[hibernate.dialect]": org.hibernate.dialect.PostgreSQLDialect
   kafka:
     bootstrap-servers: localhost:9092
     template:
